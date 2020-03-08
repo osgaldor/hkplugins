@@ -1,0 +1,109 @@
+/*-------------------------------------------------------------------------
+  htentities.hpd 1.0
+
+  HTML-Kit hkScript plugin created on 10-Jan-2020 10:45:38 AM
+  Version Information: HKPGEN 2.96,  HKPAPI 1.0.50
+-------------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function whenever user clicks on
+  the the plugin's icon, selects one of its drop-down menu items or
+  otherwise invokes the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Main(pDataIn, pDataOut)
+{
+  var nPluginID = 0;
+  var nMenuItemID = 0;
+  var nOutputMode = 1;
+  var sOutput = "";
+  var nMoveCursor = 0;
+  var nFormatTags = 0;
+
+  /*----------------------------------------------------------
+    Get the 1 based plugin ID. Useful when there are two
+    or more plugins registered within a single file.
+  ----------------------------------------------------------*/
+  nPluginID = hkp_DataGetInt( pDataIn, "P_ID", 1 );
+
+  /*----------------------------------------------------------
+    Get the 0 based menu item ID. Useful if there is a
+    drop-down menu attached to the plugin.
+  ----------------------------------------------------------*/
+  nMenuItemID = hkp_DataGetInt( pDataIn, "ARGV1", -1 );
+
+  /* Button "+" */
+  if(nPluginID == 1)
+  {
+    /* Menu Item "C" */
+    if(nMenuItemID == 0)
+    {
+      sOutput = "&copy;";
+    }
+    /* Menu Item "TM" */
+    else if(nMenuItemID == 1)
+    {
+      sOutput = "&trade;";
+    }
+    /* Menu Item "Action1" */
+    else
+    {
+      sOutput = "adds html entities";
+    }
+  }
+  /* Button "SP" */
+  else if(nPluginID == 2)
+  {
+    /* Menu Item "nbsp" */
+    sOutput = "&nbsp;";
+  }
+
+  hkp_DataAdd( pDataOut, "OUTPUT", sOutput );
+  hkp_DataAddInt( pDataOut, "MODE_OUTPUT", nOutputMode );
+  hkp_DataAddInt( pDataOut, "MODE_MOVE_TO_CARET", nMoveCursor );
+  hkp_DataAddInt( pDataOut, "MODE_PREPROCESS_FORMAT_TAGS", nFormatTags );
+
+}
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function to initialize and register
+  the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Register(pDataIn, pDataOut)
+{
+  /*---------------------
+    Button # 1:
+      "+"
+  ---------------------*/
+  hkp_DataSetGlobalSuffix( "_1" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "+" );
+  hkp_DataAdd( pDataOut, "SECTION", "Entities" );
+
+  /* Menu Items */
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM1", "C" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM2", "TM" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+
+  /*----------------------
+    Button # 2:
+      "SP"
+  ----------------------*/
+  hkp_DataSetGlobalSuffix( "_2" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "SP" );
+  hkp_DataAdd( pDataOut, "SECTION", "Entities" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+}
+

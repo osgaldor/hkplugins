@@ -1,0 +1,158 @@
+/*-------------------------------------------------------------------------
+  myphp.hpd 1.0
+
+  HTML-Kit hkScript plugin created on 12-Jan-2020 6:53:39 PM
+  Version Information: HKPGEN 2.96,  HKPAPI 1.0.50
+-------------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function whenever user clicks on
+  the the plugin's icon, selects one of its drop-down menu items or
+  otherwise invokes the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Main(pDataIn, pDataOut)
+{
+  var nPluginID = 0;
+  var nMenuItemID = 0;
+  var nOutputMode = 1;
+  var sOutput = "";
+  var nMoveCursor = 0;
+  var nFormatTags = 0;
+
+  /*----------------------------------------------------------
+    Get the 1 based plugin ID. Useful when there are two
+    or more plugins registered within a single file.
+  ----------------------------------------------------------*/
+  nPluginID = hkp_DataGetInt( pDataIn, "P_ID", 1 );
+
+  /*----------------------------------------------------------
+    Get the 0 based menu item ID. Useful if there is a
+    drop-down menu attached to the plugin.
+  ----------------------------------------------------------*/
+  nMenuItemID = hkp_DataGetInt( pDataIn, "ARGV1", -1 );
+
+  /* Button "PHP" */
+  if(nPluginID == 1)
+  {
+    /* Menu Item "def" */
+    if(nMenuItemID == 0)
+    {
+      sOutput = "php tags\n";
+    }
+    /* Menu Item "<?php" */
+    else if(nMenuItemID == 1)
+    {
+      sOutput = "<?php\n|\n?>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "echo" */
+    else if(nMenuItemID == 2)
+    {
+      sOutput = "echo \'|\';";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "$this->" */
+    else if(nMenuItemID == 3)
+    {
+      sOutput = "$this->|()";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "class" */
+    else if(nMenuItemID == 4)
+    {
+      sOutput = "class | {\n\n}//end class";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "$_POST" */
+    else if(nMenuItemID == 5)
+    {
+      sOutput = "$_POST[\'|\']";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "array" */
+    else
+    {
+      sOutput = "$| = array();";
+      nMoveCursor = 1;
+    }
+  }
+  /* Button "functions" */
+  else if(nPluginID == 2)
+  {
+    /* Menu Item "constructor" */
+    if(nMenuItemID == 0)
+    {
+      sOutput = "public function __construct(|){\n\n}//end constructor";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "public function" */
+    else if(nMenuItemID == 1)
+    {
+      sOutput = "public function |(){\n\n}//end function";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "defo" */
+    else
+    {
+      sOutput = "function tags";
+    }
+  }
+
+  hkp_DataAdd( pDataOut, "OUTPUT", sOutput );
+  hkp_DataAddInt( pDataOut, "MODE_OUTPUT", nOutputMode );
+  hkp_DataAddInt( pDataOut, "MODE_MOVE_TO_CARET", nMoveCursor );
+  hkp_DataAddInt( pDataOut, "MODE_PREPROCESS_FORMAT_TAGS", nFormatTags );
+
+}
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function to initialize and register
+  the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Register(pDataIn, pDataOut)
+{
+  /*-----------------------
+    Button # 1:
+      "PHP"
+  -----------------------*/
+  hkp_DataSetGlobalSuffix( "_1" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "PHP" );
+  hkp_DataAdd( pDataOut, "SECTION", "PHP" );
+
+  /* Menu Items */
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM1", "def" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM2", "<?php" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM3", "echo" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM4", "$this->" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM5", "class" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM6", "$_POST" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+
+  /*-----------------------------
+    Button # 2:
+      "functions"
+  -----------------------------*/
+  hkp_DataSetGlobalSuffix( "_2" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "functions" );
+  hkp_DataAdd( pDataOut, "SECTION", "PHP" );
+
+  /* Menu Items */
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM1", "constructor" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM2", "public function" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+}
+

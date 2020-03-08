@@ -1,0 +1,177 @@
+/*-------------------------------------------------------------------------
+  myforms.hpd 1.0
+
+  HTML-Kit hkScript plugin created on 01-Mar-2020 2:45:33 AM
+  Version Information: HKPGEN 2.96,  HKPAPI 1.0.50
+-------------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function whenever user clicks on
+  the the plugin's icon, selects one of its drop-down menu items or
+  otherwise invokes the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Main(pDataIn, pDataOut)
+{
+  var nPluginID = 0;
+  var nMenuItemID = 0;
+  var nOutputMode = 1;
+  var sOutput = "";
+  var nMoveCursor = 0;
+  var nFormatTags = 0;
+
+  /*----------------------------------------------------------
+    Get the 1 based plugin ID. Useful when there are two
+    or more plugins registered within a single file.
+  ----------------------------------------------------------*/
+  nPluginID = hkp_DataGetInt( pDataIn, "P_ID", 1 );
+
+  /*----------------------------------------------------------
+    Get the 0 based menu item ID. Useful if there is a
+    drop-down menu attached to the plugin.
+  ----------------------------------------------------------*/
+  nMenuItemID = hkp_DataGetInt( pDataIn, "ARGV1", -1 );
+
+  /* Button "Form" */
+  if(nPluginID == 1)
+  {
+    /* Menu Item "formphpself" */
+    if(nMenuItemID == 0)
+    {
+      sOutput = "<form action=\'<?php echo $_SERVER[\"PHP_SELF\"];?>\' method=\'POST\'>\n</form>";
+    }
+    /* Menu Item "formactionmethod=post" */
+    else if(nMenuItemID == 1)
+    {
+      sOutput = "<form action=\'|\' method=\'POST\'>\n\n</form>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "def" */
+    else
+    {
+      sOutput = "form tags\n";
+    }
+  }
+  /* Button "Inp" */
+  else if(nPluginID == 2)
+  {
+    /* Menu Item "selectname" */
+    if(nMenuItemID == 0)
+    {
+      sOutput = "<select name=\'|\'>\n<option></option>\n</select>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "option" */
+    else if(nMenuItemID == 1)
+    {
+      sOutput = "<option>|</option>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "checkboxname" */
+    else if(nMenuItemID == 2)
+    {
+      sOutput = "<input type=\'checkbox\' name=\'|\' />";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "labelfor" */
+    else if(nMenuItemID == 3)
+    {
+      sOutput = "<label for=\'|\'></label>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "fieldset" */
+    else if(nMenuItemID == 4)
+    {
+      sOutput = "<fieldset>\n|\n</fieldset>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "resetbutton" */
+    else if(nMenuItemID == 5)
+    {
+      sOutput = "<button type=\"reset\">|</button>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "submitbutton" */
+    else if(nMenuItemID == 6)
+    {
+      sOutput = "<button type=\"submit\">submit</button>";
+    }
+    /* Menu Item "PW" */
+    else if(nMenuItemID == 7)
+    {
+      sOutput = "<input type=\'password\' name=\'|\' placeholder=\'Password\' onfocus=\"this.placeholder = \'\'\"/>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "textnameplaceholderOnfocus" */
+    else if(nMenuItemID == 8)
+    {
+      sOutput = "<input type=\'text\' name=\'|\' placeholder=\'\'  onfocus=\"this.placeholder = \'\'\"/>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "def" */
+    else
+    {
+      sOutput = "input tags";
+    }
+  }
+
+  hkp_DataAdd( pDataOut, "OUTPUT", sOutput );
+  hkp_DataAddInt( pDataOut, "MODE_OUTPUT", nOutputMode );
+  hkp_DataAddInt( pDataOut, "MODE_MOVE_TO_CARET", nMoveCursor );
+  hkp_DataAddInt( pDataOut, "MODE_PREPROCESS_FORMAT_TAGS", nFormatTags );
+
+}
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function to initialize and register
+  the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Register(pDataIn, pDataOut)
+{
+  /*------------------------
+    Button # 1:
+      "Form"
+  ------------------------*/
+  hkp_DataSetGlobalSuffix( "_1" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "Form" );
+  hkp_DataAdd( pDataOut, "SECTION", "myForms" );
+
+  /* Menu Items */
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM1", "formphpself" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM2", "formactionmethod=post" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+
+  /*-----------------------
+    Button # 2:
+      "Inp"
+  -----------------------*/
+  hkp_DataSetGlobalSuffix( "_2" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "Inp" );
+  hkp_DataAdd( pDataOut, "SECTION", "myForms" );
+
+  /* Menu Items */
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM1", "selectname" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM2", "option" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM3", "checkboxname" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM4", "labelfor" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM5", "fieldset" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM6", "resetbutton" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM7", "submitbutton" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM8", "PW" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM9", "textnameplaceholderOnfocus" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+}
+

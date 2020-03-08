@@ -1,0 +1,63 @@
+/*-------------------------------------------------------------------------
+  jqui.hpd 1.0
+
+  HTML-Kit hkScript plugin created on 29-Feb-2020 9:49:52 PM
+  Version Information: HKPGEN 2.96,  HKPAPI 1.0.50
+-------------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function whenever user clicks on
+  the the plugin's icon, selects one of its drop-down menu items or
+  otherwise invokes the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Main(pDataIn, pDataOut)
+{
+  var nPluginID = 0;
+  var nOutputMode = 1;
+  var sOutput = "";
+  var nMoveCursor = 0;
+  var nFormatTags = 0;
+
+  /*----------------------------------------------------------
+    Get the 1 based plugin ID. Useful when there are two
+    or more plugins registered within a single file.
+  ----------------------------------------------------------*/
+  nPluginID = hkp_DataGetInt( pDataIn, "P_ID", 1 );
+
+  /* Button "jqUI" */
+  if(nPluginID == 1)
+  {
+    /* Menu Item "jQuery UI" */
+    sOutput = "  <link rel=\"stylesheet\" href=\"//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css\">\n  <script src=\"//code.jquery.com/jquery-1.12.4.js\"></script>\n  <script src=\"//code.jquery.com/ui/1.12.1/jquery-ui.js\"></script>";
+  }
+
+  hkp_DataAdd( pDataOut, "OUTPUT", sOutput );
+  hkp_DataAddInt( pDataOut, "MODE_OUTPUT", nOutputMode );
+  hkp_DataAddInt( pDataOut, "MODE_MOVE_TO_CARET", nMoveCursor );
+  hkp_DataAddInt( pDataOut, "MODE_PREPROCESS_FORMAT_TAGS", nFormatTags );
+
+}
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function to initialize and register
+  the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Register(pDataIn, pDataOut)
+{
+  /*------------------------
+    Button # 1:
+      "jqUI"
+  ------------------------*/
+  hkp_DataSetGlobalSuffix( "_1" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "jqUI" );
+  hkp_DataAdd( pDataOut, "SECTION", "CDNs" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+}
+

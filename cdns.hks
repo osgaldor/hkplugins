@@ -1,0 +1,106 @@
+/*-------------------------------------------------------------------------
+  cdns.hks
+
+  HTML-Kit hkScript plugin created on 25-Feb-2020 5:56:05 AM
+  Version Information: HKPGEN 2.96,  HKPAPI 1.0.50
+-------------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function whenever user clicks on
+  the the plugin's icon, selects one of its drop-down menu items or
+  otherwise invokes the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Main(pDataIn, pDataOut)
+{
+  var nPluginID = 0;
+  var nOutputMode = 1;
+  var sOutput = "";
+  var nMoveCursor = 0;
+  var nFormatTags = 0;
+
+  /*----------------------------------------------------------
+    Get the 1 based plugin ID. Useful when there are two
+    or more plugins registered within a single file.
+  ----------------------------------------------------------*/
+  nPluginID = hkp_DataGetInt( pDataIn, "P_ID", 1 );
+
+  /* Button "BS3" */
+  if(nPluginID == 1)
+  {
+    /* Menu Item "bootstrap 3" */
+    sOutput = " <!-- Latest compiled and minified CSS -->\n<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css\">\n\n<!-- jQuery library -->\n<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js\"></script>\n\n<!-- Latest compiled JavaScript -->\n<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js\"></script> ";
+  }
+  /* Button "JQ" */
+  else if(nPluginID == 2)
+  {
+    /* Menu Item "insert jQuery cdn" */
+    sOutput = "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js\"></script>";
+  }
+  /* Button "BS4" */
+  else if(nPluginID == 3)
+  {
+    /* Menu Item "insert bootstrap 4" */
+    sOutput = " <!-- Latest compiled and minified CSS -->\n<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css\">\n\n<!-- jQuery library -->\n<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js\"></script>\n\n<!-- Popper JS -->\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js\"></script>\n\n<!-- Latest compiled JavaScript -->\n<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js\"></script> ";
+  }
+
+  hkp_DataAdd( pDataOut, "OUTPUT", sOutput );
+  hkp_DataAddInt( pDataOut, "MODE_OUTPUT", nOutputMode );
+  hkp_DataAddInt( pDataOut, "MODE_MOVE_TO_CARET", nMoveCursor );
+  hkp_DataAddInt( pDataOut, "MODE_PREPROCESS_FORMAT_TAGS", nFormatTags );
+
+}
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function to initialize and register
+  the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Register(pDataIn, pDataOut)
+{
+  /*-----------------------
+    Button # 1:
+      "BS3"
+  -----------------------*/
+  hkp_DataSetGlobalSuffix( "_1" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "BS3" );
+  hkp_DataAdd( pDataOut, "SECTION", "CDNs" );
+
+  /* Optional Information */
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+  hkp_DataAdd( pDataOut, "DESCRIPTION", "bootstrap 3 uses glyphicons" );
+
+  hkp_DataSetGlobalSuffix( "" );
+
+  /*----------------------
+    Button # 2:
+      "JQ"
+  ----------------------*/
+  hkp_DataSetGlobalSuffix( "_2" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "JQ" );
+  hkp_DataAdd( pDataOut, "SECTION", "CDNs" );
+
+  /* Optional Information */
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+
+  /*-----------------------
+    Button # 3:
+      "BS4"
+  -----------------------*/
+  hkp_DataSetGlobalSuffix( "_3" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "BS4" );
+  hkp_DataAdd( pDataOut, "SECTION", "CDNs" );
+
+  /* Optional Information */
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+  hkp_DataAdd( pDataOut, "DESCRIPTION", "adds bootstrap 4 cdns" );
+
+  hkp_DataSetGlobalSuffix( "" );
+}
+

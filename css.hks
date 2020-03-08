@@ -1,0 +1,142 @@
+/*-------------------------------------------------------------------------
+  css.hpd 1.0
+
+  HTML-Kit hkScript plugin created on 01-Mar-2020 7:48:51 PM
+  Version Information: HKPGEN 2.96,  HKPAPI 1.0.50
+-------------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function whenever user clicks on
+  the the plugin's icon, selects one of its drop-down menu items or
+  otherwise invokes the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Main(pDataIn, pDataOut)
+{
+  var nPluginID = 0;
+  var nMenuItemID = 0;
+  var nOutputMode = 1;
+  var sOutput = "";
+  var nMoveCursor = 0;
+  var nFormatTags = 0;
+
+  /*----------------------------------------------------------
+    Get the 1 based plugin ID. Useful when there are two
+    or more plugins registered within a single file.
+  ----------------------------------------------------------*/
+  nPluginID = hkp_DataGetInt( pDataIn, "P_ID", 1 );
+
+  /*----------------------------------------------------------
+    Get the 0 based menu item ID. Useful if there is a
+    drop-down menu attached to the plugin.
+  ----------------------------------------------------------*/
+  nMenuItemID = hkp_DataGetInt( pDataIn, "ARGV1", -1 );
+
+  /* Button "CSS" */
+  if(nPluginID == 1)
+  {
+    /* Menu Item "text-align:center;" */
+    if(nMenuItemID == 0)
+    {
+      sOutput = "text-align:center;";
+    }
+    /* Menu Item "margin:0px auto;" */
+    else if(nMenuItemID == 1)
+    {
+      sOutput = "margin:0px auto;";
+    }
+    /* Menu Item "black border" */
+    else if(nMenuItemID == 2)
+    {
+      sOutput = "border:2px solid black;";
+    }
+    /* Menu Item "font-size" */
+    else if(nMenuItemID == 3)
+    {
+      sOutput = "font-size:|;";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "font-weight" */
+    else if(nMenuItemID == 4)
+    {
+      sOutput = "font-weight:|;";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "border" */
+    else if(nMenuItemID == 5)
+    {
+      sOutput = "border:|;";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "background-color" */
+    else if(nMenuItemID == 6)
+    {
+      sOutput = "background-color:|;";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "color" */
+    else if(nMenuItemID == 7)
+    {
+      sOutput = "color:|;";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "padding" */
+    else if(nMenuItemID == 8)
+    {
+      sOutput = "padding:|;";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "width" */
+    else if(nMenuItemID == 9)
+    {
+      sOutput = "width:|;";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "def" */
+    else
+    {
+      sOutput = "common css attribuutes";
+    }
+  }
+
+  hkp_DataAdd( pDataOut, "OUTPUT", sOutput );
+  hkp_DataAddInt( pDataOut, "MODE_OUTPUT", nOutputMode );
+  hkp_DataAddInt( pDataOut, "MODE_MOVE_TO_CARET", nMoveCursor );
+  hkp_DataAddInt( pDataOut, "MODE_PREPROCESS_FORMAT_TAGS", nFormatTags );
+
+}
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function to initialize and register
+  the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Register(pDataIn, pDataOut)
+{
+  /*-----------------------
+    Button # 1:
+      "CSS"
+  -----------------------*/
+  hkp_DataSetGlobalSuffix( "_1" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "CSS" );
+  hkp_DataAdd( pDataOut, "SECTION", "CSS" );
+
+  /* Menu Items */
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM1", "text-align:center;" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM2", "margin:0px auto;" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM3", "black border" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM4", "font-size" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM5", "font-weight" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM6", "border" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM7", "background-color" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM8", "color" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM9", "padding" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM10", "width" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+}
+

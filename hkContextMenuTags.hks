@@ -1,0 +1,830 @@
+/*
+  hkContextMenuTags 0.93
+
+  Adds a customizable list of tags to the right click menu.
+
+  Copyright (C) 2005, Chami.com
+
+  History
+    10-Jun-2005 0.93 -- New item types: folder window, open files and open URLs.
+    26-Oct-2004 0.92 -- {{ASP_LT}} and {{ASP_GT}} for entering special tokens <% and %>
+    05-Aug-2004 0.91 -- New item types.
+    05-Aug-2004 0.90 -- First release.
+
+  Disclaimer  
+    THIS SOFTWARE IS PROVIDED ON AN "AS-IS" BASIS WITHOUT WARRANTY OF ANY KIND.
+    Developer(s) specifically disclaim(s) any other warranty, express or implied, 
+    including any warranty of merchantability or fitness for a particular purpose.
+    In no event shall developer(s) be liable for any consequential, indirect, 
+    special or incidental damages, even if developer(s) has/have been advised by
+    user of the possibility of such potential loss or damage. User agrees to hold
+    developer(s) harmless from and against any and all claims, losses, liabilities
+    and expenses.   
+*/
+
+
+function __InputWizard_Show(sTitle, sDesc, sInputFields, bPreviewShow, sPreviewCode)
+{
+  var sResult = "", pIN = 0, pOUT = 0;
+
+  pIN  = hkp_DataNew();
+  pOUT = hkp_DataNew();
+  hkp_DataAdd(pIN, "FUNC_NAME", "InputWizard");
+  hkp_DataAddInt(pIN, "FUNC_PARAM1", 1);
+  hkp_DataAdd(pIN, "FUNC_PARAM2", sTitle);
+  hkp_DataAdd(pIN, "FUNC_PARAM3", sDesc);
+  hkp_DataAdd(pIN, "FUNC_PARAM4", sInputFields);
+  hkp_DataAddInt(pIN, "FUNC_PARAM5", bPreviewShow);
+  hkp_DataAdd(pIN, "FUNC_PARAM6", sPreviewCode);
+  if(hkp_Func(pIN, pOUT))
+  {
+    if( hkp_DataGetInt(pOUT, "FUNC_PARAM1", 0) )
+    {
+      var s = "";
+      if( hkp_DataGet(pOUT, "FUNC_PARAM2", &s) )
+      {
+        sResult = s;
+      }
+    }
+  }
+  hkp_DataFree(pOUT);
+  hkp_DataFree(pIN);
+
+  return sResult;
+}
+
+function __InputWizard_GetData(sVariableName)
+{
+  var sResult = "", pIN = 0, pOUT = 0;
+
+  pIN  = hkp_DataNew();
+  pOUT = hkp_DataNew();
+  hkp_DataAdd(pIN, "FUNC_NAME", "InputWizard");
+  hkp_DataAddInt(pIN, "FUNC_PARAM1", 2);
+  hkp_DataAdd(pIN, "FUNC_PARAM2", sVariableName);
+  if(hkp_Func(pIN, pOUT))
+  {
+    if(hkp_DataGetInt(pOUT, "FUNC_PARAM1", 0))
+    {
+      var s = "";
+      if(hkp_DataGet(pOUT, "FUNC_PARAM2", &s))
+      {
+        sResult = s;
+      }
+    }
+  }
+  hkp_DataFree(pOUT);
+  hkp_DataFree(pIN);
+ 
+  return sResult;
+}
+
+function __PluginDataRead(sPluginID, sKey, sDefValue)
+{
+  var sResult = "", pIN = 0, pOUT = 0;
+  
+  pIN  = hkp_DataNew();
+  pOUT = hkp_DataNew();
+  hkp_DataAdd(pIN, "FUNC_NAME", "PluginDataRead");
+  hkp_DataAdd(pIN, "FUNC_PARAM1", sPluginID);
+  hkp_DataAdd(pIN, "FUNC_PARAM2", sKey);
+  hkp_DataAdd(pIN, "FUNC_PARAM3", sDefValue);
+  if(hkp_Func(pIN, pOUT))
+  {
+    hkp_DataGet(pOUT, "FUNC_PARAM1", &sResult);
+  }
+  hkp_DataFree(pOUT);
+  hkp_DataFree(pIN);
+  
+  return sResult;
+}
+
+function __PluginDataWrite(sPluginID, sKey, sValue)
+{
+  var nResult = 0, pIN = 0, pOUT = 0;
+  
+  pIN  = hkp_DataNew();
+  pOUT = hkp_DataNew();
+  hkp_DataAdd(pIN, "FUNC_NAME", "PluginDataWrite");
+  hkp_DataAdd(pIN, "FUNC_PARAM1", sPluginID);
+  hkp_DataAdd(pIN, "FUNC_PARAM2", sKey);
+  hkp_DataAdd(pIN, "FUNC_PARAM3", sValue);
+  if(hkp_Func(pIN, pOUT))
+  {
+    nResult = 1;
+  }
+  hkp_DataFree(pOUT);
+  hkp_DataFree(pIN);
+  
+  return nResult;
+}
+
+function __InvokeCommand( sCommand )
+{
+  var nResult = 0, pIN = 0, pOUT = 0;
+
+  pIN  = hkp_DataNew();
+  pOUT = hkp_DataNew();
+  hkp_DataAdd( pIN, "FUNC_NAME", "InvokeCommand" );
+  hkp_DataAdd( pIN, "FUNC_PARAM1", sCommand );
+  if(hkp_Func(pIN, pOUT))
+  {
+    nResult = 1;
+  }
+  hkp_DataFree( pOUT );
+  hkp_DataFree( pIN );
+
+  return nResult;
+}
+
+function __GetTextFromFile(sFileName)
+{
+  var sResult = "", pIN = 0, pOUT = 0;
+
+  pIN  = hkp_DataNew();
+  pOUT = hkp_DataNew();
+  hkp_DataAdd(pIN, "FUNC_NAME", "LoadFromFile");
+  hkp_DataAdd(pIN, "FUNC_PARAM1", sFileName);
+  if(hkp_Func(pIN, pOUT))
+  {
+    var s = "";
+    if( hkp_DataGet(pOUT, "FUNC_PARAM1", &s) )
+    {
+      sResult = s;
+    }
+  }
+  hkp_DataFree(pOUT);
+  hkp_DataFree(pIN);
+
+  return sResult;
+}
+
+function eschtml(s)
+{
+  s = rreplace("\\&", "&amp;", s, "g");
+  s = rreplace("\\<", "&lt;", s, "g");
+  s = rreplace("\\>", "&gt;", s, "g");
+  s = rreplace("\\\"", "&quot;", s, "g");
+  s = rreplace("\\'", "&#39;", s, "g");
+  return s;
+}
+
+function __SaveTextToFile(sFileName, sText)
+{
+  var nResult = 0, pIN = 0, pOUT = 0;
+
+  pIN  = hkp_DataNew();
+  pOUT = hkp_DataNew();
+  hkp_DataAdd(pIN, "FUNC_NAME", "SaveToFile");
+  hkp_DataAdd(pIN, "FUNC_PARAM1", sText);
+  hkp_DataAdd(pIN, "FUNC_PARAM2", sFileName);
+  if(hkp_Func(pIN, pOUT))
+  {
+    nResult = 1;
+  }
+  hkp_DataFree(pOUT);
+  hkp_DataFree(pIN);
+
+  return nResult;
+}
+
+function __GetTempFileNameExt(sTempPath, sFileNamePart, sFileNameDotExt)
+{
+  var sResult = "", pIN = 0, pOUT = 0;
+
+  pIN  = hkp_DataNew();
+  pOUT = hkp_DataNew();
+  hkp_DataAdd(pIN, "FUNC_NAME", "GetTempFileNameExt");
+  hkp_DataAdd(pIN, "FUNC_PARAM1", sFileNamePart);
+  hkp_DataAdd(pIN, "FUNC_PARAM2", sFileNameDotExt);
+  if(hkp_Func(pIN, pOUT))
+  {
+    var s = "";
+    if( hkp_DataGet(pOUT, "FUNC_PARAM1", &s) )
+    {
+      sResult = s;
+    }
+  }
+  hkp_DataFree(pOUT);
+  hkp_DataFree(pIN);
+
+  if(0 == length(sResult))
+  {
+    sResult = ftempname(sFileNamePart, sFileNameDotExt);
+  }
+  if(0 == length(sResult))
+  {
+    sResult = sTempPath + sFileNamePart+"_temp_file_"+sFileNameDotExt;
+  }
+
+  return sResult;
+}
+
+function __DesktopOpenList( sTempPath, sListOfItems )
+{
+  var nResult = 0, pIN = 0, pOUT = 0;
+  var sFileName = "";
+
+  sFileName = __GetTempFileNameExt(sTempPath, "dsk", ".tmp");
+
+  if(sFileName)
+  {
+    var sText = "";
+    var aTemp = new array();
+
+    aTemp = rsplit("\\n", sListOfItems);
+    if( aTemp && (length(aTemp)>0) )
+    {
+      sText += "<?xml version=\"1.0\"?>\n";
+      sText += "<desktop version=\"1.0\">\n";
+      sText += "<windows>\n";
+
+      var j = 0, sTempItem = "", sTempChar = "", sTempP1 = "";
+      for(j=0; j<length(aTemp); j++)
+      {
+        sTempItem = aTemp[j];
+        if( sTempItem && (length(sTempItem)>0) )
+        {
+          sTempChar = substr(sTempItem,0,1);
+          sTempP1 = substr(sTempItem,1);
+          if("@" == sTempChar)
+          {
+            sText += "<i type='browser' url=\""+eschtml(sTempP1)+"\" state='norm' />\n";
+          }
+          else
+          if("*" == sTempChar)
+          {
+            var aFTPParams = new array();
+            aFTPParams = rsplit("\\;", sTempP1);
+            if( aFTPParams && (length(aFTPParams)>=3) )
+            {
+              sText += "<i type='editor' remote='1' node=\""+eschtml(aFTPParams[0])+"\" path=\""+eschtml(aFTPParams[1])+"\" file=\""+eschtml(aFTPParams[2])+"\" state='norm' />\n";
+            }
+          }
+          else
+          {
+            sText += "<i type='editor' path=\""+eschtml(sTempItem)+"\" state='norm' />\n";
+          }
+        }
+      }
+
+      sText += "</windows>\n";
+      sText += "</desktop>\n";
+    }
+
+    //Alert(sText, "Desktop Info");
+
+    if( (length(sText)>0) && __SaveTextToFile(sFileName, sText) )
+    {
+      pIN  = hkp_DataNew();
+      pOUT = hkp_DataNew();
+      hkp_DataAdd( pIN, "FUNC_NAME", "Desktop" );
+      hkp_DataAddInt( pIN, "FUNC_PARAM1", 1 );
+      hkp_DataAdd( pIN, "FUNC_PARAM2", sFileName );
+      hkp_DataAddInt( pIN, "FUNC_PARAM3", 1 );
+      if(hkp_Func(pIN, pOUT))
+      {
+        nResult = 1;
+      }
+      hkp_DataFree( pOUT );
+      hkp_DataFree( pIN );
+    }
+
+    fremove(sFileName);
+  }
+
+  return nResult;
+}
+
+function PlainTextReplace(sText, sFind, sRepl)
+{
+  var p = 0, nLenText = 0, nLenFind = 0, sRetVal = "";
+
+  nLenFind = length(sFind);
+
+  if(nLenFind > 0)
+  {
+    nLenText = length(sText);
+    while(p < nLenText)
+    {
+      if(sFind == substr(sText, p, nLenFind))
+      {
+        sRetVal += sRepl;
+        p += nLenFind;
+      }
+      else
+      {
+        sRetVal += substr(sText, p, 1);
+        ++p;
+      }
+    }
+    sText = sRetVal;
+  }
+
+  return sText;
+}
+
+function hkp_Main(pDataIn, pDataOut)
+{
+  var sPluginID = "hkContextMenuTags", sPluginKey = "N", nMenuItemID = 0, nEvent = 0, sTempPath = "";
+  var bHaveSelection = 0, bShowPreferences = 0, bResetPreferences = 0, sSelText = "", nIconIndex = 0;
+  var nNoOfItems = 130, j = 0, nIncluded = 0, sID = "", sCurrHint = "", sCurrContent = "", nCurrMode = 0;
+  var anItemEnabled = new array();
+  var asItemCaption = new array();
+  var asItemTag = new array();
+  var sTemp = "", asTemp = new array(), nDefItems = 0;
+  var sReservedItem = "0\f-\f-", asDefItems = new array(
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "1\f<&P>aragraph\f<^Tp^N>|{{SELTEXT}}<^T/p^N>",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "1\fLink - <&a href=\"|\">\f<^Ta^N ^Ahref^N^U^Q|^Q>{{SELTEXT}}</^Ta^N>",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "3\fLink to &file...\fMTagMakeLink",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "3\f&Image...\fMTagImageInsert",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "1\f<&div class=\"|\">\f<^Tdiv^N ^Aclass^N^U^Q|^Q>{{SELTEXT}}</^Tdiv^N>",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "1\f<&span class=\"|\">\f<^Tspan^N ^Aclass^N^U^Q|^Q>{{SELTEXT}}</^Tspan^N>",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "1\f&Bold - <strong>\f<^Tstrong^N>|{{SELTEXT}}<^T/strong^N>",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "1\fI&talic - <em>\f<^Tem^N>|{{SELTEXT}}<^T/em^N>",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "3\fAn&y Tag...\fMTagEnclose",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "1\f<!-- HTML &Comment -->\f<!-- |{{SELTEXT}} -->",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "1\f/* CSS/B&lock Comment */\f/* |{{SELTEXT}} */",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "3\fInsert S&nippet... (Shift+Ctrl+I)\fMSnippetInsert",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "3\fSa&ve Selection as Snippet...\fMFileSelectionSaveAsSnippet",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-",
+
+    "1\fLine Break - <br /> (Ctrl+Enter)\f<^Tbr^N^z>",
+
+    "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-", "0\f-\f-"
+  );
+
+  nDefItems = length(asDefItems);
+
+  if(length(asDefItems) > nNoOfItems)
+  {
+    nNoOfItems = length(asDefItems);
+  }
+  else
+  if(nNoOfItems > length(asDefItems))
+  {
+    while(length(asDefItems) < nNoOfItems)
+    {
+      push(asDefItems, "0\f*\f*");
+    }
+  }
+
+  //Alert( inttostr(length(asDefItems)) , inttostr(nNoOfItems) );
+
+  nMenuItemID = hkp_DataGetInt( pDataIn, "ARGV1", -1 );
+  nEvent = hkp_DataGetInt(pDataIn, "EVENT", 0);
+
+  if(!hkp_DataGet(pDataIn, "PATH_TEMP", &sTempPath))
+  {
+    sTempPath = "";
+  }
+
+  if(10 == nEvent)
+  {
+    if(0 == nMenuItemID)
+    {
+      bShowPreferences = 1;
+    }
+    else
+    if(2 == nMenuItemID)
+    {
+      if(6 == MessageBox("Are you sure you want to delete the current tags\nand go back to the default preferences?", "Reset Preferences?", 4))
+      {
+        bResetPreferences = 1;
+      }
+    }
+  }
+
+  for(j=0; j<nNoOfItems; j++)
+  {
+    sID = (bResetPreferences?"Default":"") + inttostr(j+1);
+
+    anItemEnabled[j] = 0;
+    asItemCaption[j] = "";
+    asItemTag[j] = "";
+
+    if(nDefItems > j)
+    {
+      asTemp = rsplit("\\f", asDefItems[j]);
+      if(length(asTemp) >= 3)
+      {
+        anItemEnabled[j] = strtoint(asTemp[0]);
+        asItemCaption[j] = asTemp[1];
+        asItemTag[j] = asTemp[2];
+      }
+    }
+
+    anItemEnabled[j] = strtoint(__PluginDataRead(sPluginID, sPluginKey+sID+"E", inttostr(anItemEnabled[j])));
+    asItemCaption[j] = __PluginDataRead(sPluginID, sPluginKey+sID+"N", asItemCaption[j]);
+    asItemTag[j] = __PluginDataRead(sPluginID, sPluginKey+sID+"T", asItemTag[j]);
+
+    if(anItemEnabled[j] > 0)
+    {
+      ++nIncluded;
+      if(nMenuItemID == nIncluded)
+      {
+        sCurrContent = asItemTag[j];
+        nCurrMode = anItemEnabled[j];
+      }
+    }
+  }
+
+  hkp_DataAddInt(pDataOut, "MODE_OUTPUT", 1);
+
+  if(hkp_DataGet(pDataIn, "INPUT_SELECTION", &sSelText) && sSelText && length(sSelText))
+  {
+    bHaveSelection = 1;
+  }
+  else
+  {
+    sSelText = "";
+  }
+
+  if(1201 == nEvent) // populate the right click menu
+  {
+    nIncluded = 0;
+    for(j=0; j<nNoOfItems; j++)
+    {
+      if(anItemEnabled[j] > 0)
+      {
+        sID = inttostr(++nIncluded);
+
+        sCurrHint = asItemTag[j];
+        sCurrHint = rreplace("\\|", "{{CURSOR}}", sCurrHint, "g");
+
+        switch(anItemEnabled[j])
+        {
+        case  2: nIconIndex = 4; break;
+        case  3: nIconIndex = 7; break;
+        case  6: nIconIndex = 8; break;
+        default: nIconIndex = 6; break;
+        }
+
+        hkp_DataAdd(pDataOut, "CONTEXTMENU_EDITOR_ITEM"+sID, asItemCaption[j]);
+        hkp_DataAdd(pDataOut, "CONTEXTMENU_EDITOR_ITEM_HINT"+sID, sCurrHint);
+        hkp_DataAddInt(pDataOut, "CONTEXTMENU_EDITOR_ITEM_ICONINDEX"+sID, nIconIndex);
+      }
+    }
+
+    sID = inttostr(++nIncluded);
+    hkp_DataAdd(pDataOut, "CONTEXTMENU_EDITOR_ITEM"+sID, "Customize...");
+    hkp_DataAdd(pDataOut, "CONTEXTMENU_EDITOR_ITEM_HINT"+sID, "Customize this menu");
+    hkp_DataAddInt(pDataOut, "CONTEXTMENU_EDITOR_ITEM_ICONINDEX"+sID, 2);
+  }
+  else
+  if(1203 == nEvent)
+  {
+    if(nMenuItemID > nIncluded)
+    {
+      bShowPreferences = 1;
+    }
+    else
+    if(sCurrContent && length(sCurrContent))
+    {
+      var sSELTEXT = "{{SELTEXT}}", sSELTEXTRegex = "\\{\\{SELTEXT\\}\\}";
+      var bFormatTags = 0, sCurrTags = "";
+
+      if( (1 == nCurrMode) || (5 == nCurrMode) ) // tags
+      {
+        bFormatTags = (1 == nCurrMode);
+        sCurrTags = sCurrContent;
+      }
+      else
+      if( (2 == nCurrMode) || (4 == nCurrMode) ) // snippet from a file
+      {
+        bFormatTags = (2 == nCurrMode);
+        sCurrTags = __GetTextFromFile(sCurrContent);
+        if( sCurrTags && length(sCurrTags) )
+        {
+            // remove the last new line from the content
+          sCurrTags = rreplace("\\n\\Z|\\r\\n\\Z|\\r\\Z", "", sCurrTags);
+        }
+        else
+        {
+          Alert("Could not load snippet from file:\n\n"+sCurrContent+"\n\n", sPluginID);
+          sCurrTags = "";
+        }
+      }
+      else
+      if(3 == nCurrMode) // invoke command
+      {
+        bFormatTags = 0;
+        sCurrTags = "";
+        __InvokeCommand(sCurrContent);
+      }
+
+      else
+      if( (6 == nCurrMode) || (7 == nCurrMode) || (8 == nCurrMode) ) // open folders, files or URLs
+      {
+        bFormatTags = 0;
+        sCurrTags = "";
+
+        asTemp = rsplit("\\,|\\;", sCurrContent);
+        sTemp = "";
+        for(j=0; j<length(asTemp); j++)
+        {
+          if(length(asTemp[j])>0)
+          {
+            if(length(sTemp)>0)
+            {
+              sTemp += "\n";
+            }
+
+            switch(substr(asTemp[j],0,1))
+            {
+            case "*":break;
+            case "@":break;
+            default:
+              if(6 == nCurrMode) { sTemp += "@"; }
+              if(7 == nCurrMode) { sTemp += ""; }
+              if(8 == nCurrMode) { sTemp += "@"; }
+            break;
+            }
+
+            sTemp += ""+asTemp[j];
+          }
+        }
+        __DesktopOpenList( sTempPath, sTemp );
+      }
+
+      sCurrTags = PlainTextReplace(sCurrTags, "{{ASP_LT}}", "<%");
+      sCurrTags = PlainTextReplace(sCurrTags, "{{ASP_GT}}", "%>");
+
+      if(bHaveSelection)
+      {
+        sCurrTags = rreplace("\\|"+sSELTEXTRegex, sSELTEXT, sCurrTags, "mg");
+        sCurrTags = rreplace(sSELTEXTRegex+"\\|", sSELTEXT, sCurrTags, "mg");
+      }
+      sCurrTags = PlainTextReplace(sCurrTags, sSELTEXT, sSelText);
+
+      hkp_DataAdd(pDataOut, "OUTPUT", sCurrTags);
+      hkp_DataAddInt(pDataOut, "MODE_MOVE_TO_CARET", 1);
+      hkp_DataAddInt(pDataOut, "MODE_PREPROCESS_FORMAT_TAGS", bFormatTags);
+    }
+  }
+  else
+  if(1 == nEvent)
+  {
+    Alert("Please right click and select \"Tags\" for more options.", sPluginID);
+  }
+
+  if(bShowPreferences || bResetPreferences)
+  {
+    var sIWOut = "", sFields = "", sExpanded = "", bSavePreferences = 0;
+
+    if(bShowPreferences)
+    {
+      for(j=0; j<nNoOfItems; j++)
+      {
+        if( (length(asDefItems)>j) && (asDefItems[j] == sReservedItem) )
+        {
+          // reserved item
+        }
+        else
+        {
+          sID = inttostr(j+1);
+          sExpanded = ( (j<3) ? "":" expanded='0'");
+
+          sTemp = length(asItemCaption[j]) ? eschtml(asItemCaption[j]) : " &lt;empty - add custom item&gt;";
+          sFields += " <group caption='Item"+((anItemEnabled[j]>0)?"":" (off)")+": "+sTemp+"' id='gPrefs"+sID+"'"+sExpanded+">\n";
+          sFields += "  <input type='list' id='I"+sID+"E' prompt='Item type' hint='What type of item to display on the right click menu' iconname='attr_listimage' >\n";
+          sFields += "   <option value='0' caption='Off / Disabled'"+((0 == anItemEnabled[j])?" selected='1'":"")+" iconname='delete' />\n";
+          sFields += "   <option value='5' caption='Tags'"+((5 == anItemEnabled[j])?" selected='1'":"")+" iconname='attr_text' />\n";
+          sFields += "   <option value='1' caption='Tags (with tag formatting)'"+((1 == anItemEnabled[j])?" selected='1'":"")+" iconname='attr_text' />\n";
+          sFields += "   <option value='4' caption='Snippet from a File'"+((4 == anItemEnabled[j])?" selected='1'":"")+" iconname='file_open' />\n";
+          sFields += "   <option value='2' caption='Snippet from a File (with tag formatting)'"+((2 == anItemEnabled[j])?" selected='1'":"")+" iconname='file_open' />\n";
+          sFields += "   <option value='3' caption='Menu Command'"+((3 == anItemEnabled[j])?" selected='1'":"")+" iconname='attr_event' />\n";
+          sFields += "   <option value='6' caption='Folder Window'"+((6 == anItemEnabled[j])?" selected='1'":"")+" iconname='attr_file' />\n";
+          sFields += "   <option value='7' caption='Open Files'"+((7 == anItemEnabled[j])?" selected='1'":"")+" iconname='attr_mru' />\n";
+          sFields += "   <option value='8' caption='Open URLs'"+((8 == anItemEnabled[j])?" selected='1'":"")+" iconname='attr_url' />\n";
+          sFields += "  </input>\n";
+          sFields += "  <input type='text' id='I"+sID+"N' prompt='Menu item name' value='"+eschtml(asItemCaption[j])+"' hint='What to display on the menu for this item' iconname='attr_label' maxlength='50' />\n";
+          sFields += "  <input type='text' id='I"+sID+"T' prompt='Result' value='"+rreplace("\\n","\r\n",eschtml(asItemTag[j]),"g")+"' iconname='msg_comment' hint='Tags/files/folders/URLs/commands inserted/invoked when this menu item is clicked' maxlength='2048' />\n";
+          sFields += " </group>\n";
+        }
+      }
+
+      sIWOut = __InputWizard_Show(
+        sPluginID+" Preferences",
+        "| = Cursor position.   {{SELTEXT}} = Where to insert any selected text.\n"+
+        "Tag formatting (optional): ^N = unformatted, ^T = tag name, ^A = attribute, ^Q = quote, ^U = equal sign, ^z = <end />",
+        "<?xml version='1.0'?>\n\n"
+        "<data version='1.0' title='IW Field Definition'>\n"
+        " <group caption='Preferences' id='gPrefs'>\n"
+        +sFields+
+        " </group>\n"
+        "</data>\n",
+        0, "<!-- no preview -->");
+
+      if(length(sIWOut)>0)
+      {
+        bSavePreferences = 1;
+        for(j=0; j<nNoOfItems; j++)
+        {
+          sID = inttostr(j+1);
+          anItemEnabled[j] = strtoint(__InputWizard_GetData("I"+sID+"E"));
+          asItemCaption[j] = __InputWizard_GetData("I"+sID+"N");
+          asItemTag[j] = rreplace("\\r\\n|\\r|\\n", "\n", __InputWizard_GetData("I"+sID+"T"), "g");
+        }
+      }
+    }
+
+    if(bSavePreferences || bResetPreferences)
+    {
+      for(j=0; j<nNoOfItems; j++)
+      {
+        if( (length(asDefItems)>j) && (asDefItems[j] == sReservedItem) )
+        {
+          // reserved item
+        }
+        else
+        {
+          sID = inttostr(j+1);
+
+          if( strtoint(__PluginDataRead(sPluginID, sPluginKey+sID+"E", "0")) != anItemEnabled[j] )
+          {
+            __PluginDataWrite(sPluginID, sPluginKey+sID+"E", inttostr(anItemEnabled[j]));
+          }
+
+          if( __PluginDataRead(sPluginID, sPluginKey+sID+"N", "") != asItemCaption[j] )
+          {
+            __PluginDataWrite(sPluginID, sPluginKey+sID+"N", asItemCaption[j]);
+          }
+
+          if( __PluginDataRead(sPluginID, sPluginKey+sID+"T", "") != asItemTag[j] )
+          {
+            __PluginDataWrite(sPluginID, sPluginKey+sID+"T", asItemTag[j]);
+          }
+        }
+      }
+    }
+  }
+}
+
+function hkp_Register(pDataIn, pDataOut)
+{
+  var sIcon1 =
+    "AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAQAEAAAAAAAAAAA"
+    "AAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAwMDAAMDcwADwyqYABAQE"
+    "AAgICAAMDAwAERERABYWFgAcHBwAIiIiACkpKQBVVVUATU1NAEJCQgA5OTkAgHz/AFBQ/w"
+    "CTANYA/+zMAMbW7wDW5+cAkKmtAAAAMwAAAGYAAACZAAAAzAAAMwAAADMzAAAzZgAAM5kA"
+    "ADPMAAAz/wAAZgAAAGYzAABmZgAAZpkAAGbMAABm/wAAmQAAAJkzAACZZgAAmZkAAJnMAA"
+    "CZ/wAAzAAAAMwzAADMZgAAzJkAAMzMAADM/wAA/2YAAP+ZAAD/zAAzAAAAMwAzADMAZgAz"
+    "AJkAMwDMADMA/wAzMwAAMzMzADMzZgAzM5kAMzPMADMz/wAzZgAAM2YzADNmZgAzZpkAM2"
+    "bMADNm/wAzmQAAM5kzADOZZgAzmZkAM5nMADOZ/wAzzAAAM8wzADPMZgAzzJkAM8zMADPM"
+    "/wAz/zMAM/9mADP/mQAz/8wAM///AGYAAABmADMAZgBmAGYAmQBmAMwAZgD/AGYzAABmMz"
+    "MAZjNmAGYzmQBmM8wAZjP/AGZmAABmZjMAZmZmAGZmmQBmZswAZpkAAGaZMwBmmWYAZpmZ"
+    "AGaZzABmmf8AZswAAGbMMwBmzJkAZszMAGbM/wBm/wAAZv8zAGb/mQBm/8wAzAD/AP8AzA"
+    "CZmQAAmTOZAJkAmQCZAMwAmQAAAJkzMwCZAGYAmTPMAJkA/wCZZgAAmWYzAJkzZgCZZpkA"
+    "mWbMAJkz/wCZmTMAmZlmAJmZmQCZmcwAmZn/AJnMAACZzDMAZsxmAJnMmQCZzMwAmcz/AJ"
+    "n/AACZ/zMAmcxmAJn/mQCZ/8wAmf//AMwAAACZADMAzABmAMwAmQDMAMwAmTMAAMwzMwDM"
+    "M2YAzDOZAMwzzADMM/8AzGYAAMxmMwCZZmYAzGaZAMxmzACZZv8AzJkAAMyZMwDMmWYAzJ"
+    "mZAMyZzADMmf8AzMwAAMzMMwDMzGYAzMyZAMzMzADMzP8AzP8AAMz/MwCZ/2YAzP+ZAMz/"
+    "zADM//8AzAAzAP8AZgD/AJkAzDMAAP8zMwD/M2YA/zOZAP8zzAD/M/8A/2YAAP9mMwDMZm"
+    "YA/2aZAP9mzADMZv8A/5kAAP+ZMwD/mWYA/5mZAP+ZzAD/mf8A/8wAAP/MMwD/zGYA/8yZ"
+    "AP/MzAD/zP8A//8zAMz/ZgD//5kA///MAGZm/wBm/2YAZv//AP9mZgD/Zv8A//9mACEApQ"
+    "BfX18Ad3d3AIaGhgCWlpYAy8vLALKysgDX19cA3d3dAOPj4wDq6uoA8fHxAPj4+ADw+/8A"
+    "pKCgAICAgAAAAP8AAP8AAAD//wD/AAAA/wD/AP//AAD///8ACtPT09PT09PT09PTCgftBw"
+    "rT///////////z0wrt77wK0///////////bPPvvO0KCtP/bP9s/2z//+3t7e/wCgrT/2z/"
+    "bP9s///toPHt7W0K0///////////7aCgoO3yCtP//////////+2goO3yCgrT8fHx8fHx8f"
+    "HtoO3zCgoK0/HxCvHx8Qrx7e3zCgoKCtPxCvHx/PHxCmzTCgoKCgrTCvHx8fHx8fEK0woK"
+    "CgoK0/EK8fHx8fEK8dMKCgoKCtPx8Qrx8fEK8fHTCgoKCgrT8fHx8fHx8fHx0woKCgoK09"
+    "PT09PT09PT09MKCgoKCgoKCgoKCgoKCgoKCgoKCoAIAACACAAAgAEAAIABAACAAAAAgAAA"
+    "AIABAACAAwAAgAcAAIAPAACADwAAgA8AAIAPAACADwAAgA8AAP//AAA="
+    ;
+
+  var sIcon2 =
+    "AAABAAEAEBAEAAAAAAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAA"
+    "AAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8A"
+    "AAD//wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAAAAAAAA//////8AAADwDwAADwAA"
+    "AP//////AAAA8A8AAA8AAAD//////wAAAP////D/AAAA/w//AA8AAEDwAPAAAAAEQP8AAA"
+    "AAAARAAAAAAAAABEAAAAAAAAAEQAAAAAAAAARAAAAAAAAABEAAAAAAAAAAD//wAAAA8AAA"
+    "APAAAADwAAAA8AAAAPAAAADwAAAA8AAACOAAARRAAACrgAAAV8AAD6/AAA/fgAAP4EAAD/"
+    "/wAA"
+    ;
+
+  var sIcon3 =
+    "AAABAAEAEBAEAAAAAAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAA"
+    "AAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8A"
+    "AAD//wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    "AABwAAAAAAAAAAcAAAAGcAAABwAAAGZnAAAAcAAGZmZwAABwAAAGcAAAAABgAAZwAAAAAA"
+    "YAZwAAAAAAAGZwAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAP"
+    "//AAD//wAAzf8AALbzAAB3YQAAusAAANnzAAD+8wAA62cAAN2PAAC2/wAA3f8AAOv/AAD/"
+    "/wAA"
+    ;
+
+  var sIcon4 =
+    "AAABAAEAEBAEAAAAAAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAA"
+    "AAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8A"
+    "AAD//wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    "B///8AAAAAAH93fwAAAAAAf///AAAAAAB/d38AAABnAH///wAABmZwf38AAABmZmd//39w"
+    "AABnAH//dwYAAGcAd3dwAGAGcAAAAAAABmcAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAP"
+    "//AAAB/wAAAf8AAAH/AAAB/wAAAfMAAAHhAAABwAAAAfMAAALzAAAHZwAA/48AAP//AAD/"
+    "/wAA"
+    ;
+
+  var sIcon5 =
+    "AAABAAEAEBAEAAAAAAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAA"
+    "AAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8A"
+    "AAD//wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB3d3d3dw"
+    "AARERERERHAABAAAAAAEcAAEAAAAAARwAAQAAAAABHAABAAAAAAEcAAEAAAAAARwAAQAAA"
+    "AABHAABAAAAAAEcAAEREREREQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAP"
+    "//AADwAwAAwAMAAN/zAADdcwAA27MAANfTAADbswAA3XMAAN/zAADABwAA//8AAP//AAD/"
+    "/wAA"
+    ;
+
+  var sIcon6 =
+    "AAABAAEAEBAEAAAAAAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAA"
+    "AAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8A"
+    "AAD//wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB3d3d3dw"
+    "AARERERERHAABP/////0cAAE//Dw//RwAAT/D/8P9HAABPD///D0cAAE/w//D/RwAAT/8P"
+    "D/9HAABP/////0cAAEREREREQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAP"
+    "//AADwAwAAwAMAAMADAADAAwAAwAMAAMADAADAAwAAwAMAAMADAADABwAA//8AAP//AAD/"
+    "/wAA"
+    ;
+
+  var sIcon7 =
+    "AAABAAEAEBAEAAAAAAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAA"
+    "AAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8A"
+    "AAD//wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB3d3d3dw"
+    "AAZmZmZmZnAABv/////2cAAG//D///ZwAAb//w//9nAABv8AAP/2cAAG//D///ZwAAb//w"
+    "//9nAABv/////2cAAGZmZmZmYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAP"
+    "//AADwAwAAwAMAAMADAADAAwAAwAMAAMADAADAAwAAwAMAAMADAADABwAA//8AAP//AAD/"
+    "/wAA"
+    ;
+
+  var sIcon8 =
+    "AAABAAEAEBAEAAAAAAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAA"
+    "AAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8A"
+    "AAD//wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzMzAA"
+    "AA8DMzMzMwAAC/AzMzMzMAAPvwMzMzMzAAv78AAAAAAAD7+/v78AAAAL+/v7+wAAAA+/AA"
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAI"
+    "APAACABwAAgAMAAIABAACAAAAAgAAAAIAPAACADwAAgA8AAMf4AAD//AAA/7oAAP/HAAD/"
+    "/wAA"
+    ;
+
+  hkp_DataSetGlobalSuffix("_1");
+
+  hkp_DataAdd(pDataOut, "NAME", "hkContextMenuTags");
+  hkp_DataAdd(pDataOut, "VERSION", "0.93");
+  hkp_DataAdd(pDataOut, "SECTION", "Document");
+  hkp_DataAdd(pDataOut, "HINT", "Display customizable list of tags on the right click menu");
+  hkp_DataAdd(pDataOut, "UPID", "31214001");
+  hkp_DataAdd(pDataOut, "URL_HOME", "http://www.chami.com/html-kit/");
+  hkp_DataAdd(pDataOut, "URL_DOWNLOAD", "http://www.chami.com/html-kit/plugins/info/hkcontextmenutags/");
+
+  hkp_DataAdd( pDataOut, "MODE_ICON", "1" );
+  hkp_DataAdd( pDataOut, "ICON_SMALL", sIcon1 );
+  hkp_DataAdd( pDataOut, "ICON_INDEX1", sIcon1);
+  hkp_DataAdd( pDataOut, "ICON_INDEX2", sIcon2);
+  hkp_DataAdd( pDataOut, "ICON_INDEX3", sIcon3);
+  hkp_DataAdd( pDataOut, "ICON_INDEX4", sIcon4);
+  hkp_DataAdd( pDataOut, "ICON_INDEX5", sIcon5);
+  hkp_DataAdd( pDataOut, "ICON_INDEX6", sIcon6);
+  hkp_DataAdd( pDataOut, "ICON_INDEX7", sIcon7);
+  hkp_DataAdd( pDataOut, "ICON_INDEX8", sIcon8);
+
+  hkp_DataAdd(pDataOut, "DROPDOWN_ITEM1", "P&references...");
+  hkp_DataAdd(pDataOut, "DROPDOWN_ITEM2", "-");
+  hkp_DataAdd(pDataOut, "DROPDOWN_ITEM3", "Reset Preferences");
+
+  hkp_DataAddInt(pDataOut, "MODE_IN_TEXT_SELECTED", 1);
+
+  hkp_DataAddInt( pDataOut, "CONTEXTMENU_EDITOR_VISIBLE", 1 );
+  hkp_DataAdd( pDataOut, "CONTEXTMENU_EDITOR_SECTION", "Tags" );
+  hkp_DataAdd( pDataOut, "CONTEXTMENU_EDITOR_HINT", "Customizable list of tags" );
+  hkp_DataAddInt( pDataOut, "CONTEXTMENU_EDITOR_EVENT_ONOPEN", 1 );
+  hkp_DataAddInt( pDataOut, "CONTEXTMENU_EDITOR_EVENT_ONCLICK", 1 );
+  hkp_DataAddInt( pDataOut, "CONTEXTMENU_EDITOR_ICONINDEX", 1 );
+
+  hkp_DataSetGlobalSuffix("");
+}

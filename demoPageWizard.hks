@@ -1,0 +1,54 @@
+function hkp_Register(pDataIn, pDataOut)
+{
+  hkp_DataSetGlobalSuffix("_1");
+
+    // name of the plugin (must be unique)
+  hkp_DataAdd(pDataOut, "NAME", "demoPageWizard");
+
+    // no need to show a button on the ActionsBar
+  hkp_DataAddInt(pDataOut, "BUTTON_VISIBLE", 0);
+
+    // editor not required
+  hkp_DataAddInt(pDataOut, "MODE_EDITOR_REQUIRED", 0);
+
+    // wizard menu item caption
+  hkp_DataAdd(pDataOut, "TEMPLATEWIZARD_CAPTION", "Create a simple web page...");
+
+    // some help text
+  hkp_DataAdd(pDataOut, "TEMPLATEWIZARD_HINT", "Simple page wizard plugin.");
+
+    // request template wizard events
+  hkp_DataAddInt(pDataOut, "TEMPLATEWIZARD_EVENT_ONINVOKE", 1);
+
+  hkp_DataSetGlobalSuffix("");
+}
+
+function hkp_Main(pDataIn, pDataOut)
+{
+    // is this a template wizard event?
+  if( 1500 == hkp_DataGetInt(pDataIn, "EVENT", 0) )
+  {
+    var sHTML =
+      "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n\n" +
+      "<html>\n<head>\n<title>|Untitled</title>\n</head>\n<body>\n\n";
+
+      // modify the template based on user input.
+    if(6 == MessageBox("Do you want to display the modified date?", "Confirm", 4) )
+    {
+      sHTML += "<p>Modified on " + gettime( "DD-MMM-YYYY" ) + "</p>\n\n";
+    }
+
+    sHTML += "</body>\n</html>\n";
+
+      // send output to a new window
+    hkp_DataAdd(pDataOut, "OUTPUT", sHTML);
+    hkp_DataAddInt(pDataOut, "MODE_OUTPUT", 7);
+    hkp_DataAddInt(pDataOut, "MODE_MOVE_TO_CARET", 1);
+  }
+  else
+  {
+      // no output
+    hkp_DataAddInt(pDataOut, "MODE_OUTPUT", 1);
+  }
+}
+

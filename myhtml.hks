@@ -1,0 +1,354 @@
+/*-------------------------------------------------------------------------
+  myhtml.hpd 1.0
+
+  HTML-Kit hkScript plugin created on 16-Jan-2020 12:33:26 PM
+  Version Information: HKPGEN 2.96,  HKPAPI 1.0.50
+-------------------------------------------------------------------------*/
+
+/* Create a new file with the specified text. ---------------------------*/
+function __NewFile( sText )
+{
+  var nResult = 0, pIN = 0, pOUT = 0;
+
+  pIN  = hkp_DataNew();
+  pOUT = hkp_DataNew();
+  hkp_DataAdd( pIN, "FUNC_NAME", "NewFile" );
+  hkp_DataAdd( pIN, "FUNC_PARAM1", sText );
+  if(hkp_Func(pIN, pOUT))
+  {
+    nResult = 1;
+  }
+  hkp_DataFree( pOUT );
+  hkp_DataFree( pIN );
+
+  return nResult;
+}
+
+function __InputWizard_Show(sTitle, sDesc, sInputFields, bPreviewShow, sPreviewCode)
+{
+  var sResult = "", pIN = 0, pOUT = 0;
+
+  pIN  = hkp_DataNew();
+  pOUT = hkp_DataNew();
+  hkp_DataAdd(pIN, "FUNC_NAME", "InputWizard");
+  hkp_DataAddInt(pIN, "FUNC_PARAM1", 1);
+  hkp_DataAdd(pIN, "FUNC_PARAM2", sTitle);
+  hkp_DataAdd(pIN, "FUNC_PARAM3", sDesc);
+  hkp_DataAdd(pIN, "FUNC_PARAM4", sInputFields);
+  hkp_DataAddInt(pIN, "FUNC_PARAM5", bPreviewShow);
+  hkp_DataAdd(pIN, "FUNC_PARAM6", sPreviewCode);
+  if(hkp_Func(pIN, pOUT))
+  {
+    if( hkp_DataGetInt(pOUT, "FUNC_PARAM1", 0) )
+    {
+      var s = "";
+      if( hkp_DataGet(pOUT, "FUNC_PARAM2", &s) )
+      {
+        sResult = s;
+      }
+    }
+  }
+  hkp_DataFree(pOUT);
+  hkp_DataFree(pIN);
+
+  return sResult;
+}
+
+
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function whenever user clicks on
+  the the plugin's icon, selects one of its drop-down menu items or
+  otherwise invokes the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Main(pDataIn, pDataOut)
+{
+  var nPluginID = 0;
+  var nMenuItemID = 0;
+  var nOutputMode = 1;
+  var sOutput = "";
+  var nMoveCursor = 0;
+  var nFormatTags = 0;
+
+  /*----------------------------------------------------------
+    Get the 1 based plugin ID. Useful when there are two
+    or more plugins registered within a single file.
+  ----------------------------------------------------------*/
+  nPluginID = hkp_DataGetInt( pDataIn, "P_ID", 1 );
+
+  /*----------------------------------------------------------
+    Get the 0 based menu item ID. Useful if there is a
+    drop-down menu attached to the plugin.
+  ----------------------------------------------------------*/
+  nMenuItemID = hkp_DataGetInt( pDataIn, "ARGV1", -1 );
+
+  /* Button "Lists" */
+  if(nPluginID == 1)
+  {
+    /* Menu Item "LI" */
+    if(nMenuItemID == 0)
+    {
+      sOutput = "<li>|</li>";
+    }
+    /* Menu Item "UL" */
+    else if(nMenuItemID == 1)
+    {
+      sOutput = "<ul>|\n</ul>";
+    }
+    /* Menu Item "OL" */
+    else
+    {
+      sOutput = "<ol>|\n</ol>";
+    }
+  }
+  /* Button "HTML" */
+  else if(nPluginID == 2)
+  {
+    /* Menu Item "A" */
+    if(nMenuItemID == 0)
+    {
+      sOutput = "<a href=\"|\"></a>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<html>" */
+    else if(nMenuItemID == 1)
+    {
+      sOutput = "<html>|</html>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<head>" */
+    else if(nMenuItemID == 2)
+    {
+      sOutput = "<head>|</head>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<title>" */
+    else if(nMenuItemID == 3)
+    {
+      sOutput = "<title>|</title>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<body>" */
+    else if(nMenuItemID == 4)
+    {
+      sOutput = "<body>|</body>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<p>" */
+    else if(nMenuItemID == 5)
+    {
+      sOutput = "<p>|</p>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<div id="">" */
+    else if(nMenuItemID == 6)
+    {
+      sOutput = "<div id=\"|\"></div>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<h1>" */
+    else if(nMenuItemID == 7)
+    {
+      sOutput = "<h1>|</h1>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<h2>" */
+    else if(nMenuItemID == 8)
+    {
+      sOutput = "<h2>|</h2>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<h3>" */
+    else if(nMenuItemID == 9)
+    {
+      sOutput = "<h3>|</h3>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<h4>" */
+    else if(nMenuItemID == 10)
+    {
+      sOutput = "<h4>|</h4>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<h5>" */
+    else if(nMenuItemID == 11)
+    {
+      sOutput = "<h5>|</h5>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "<span>" */
+    else if(nMenuItemID == 12)
+    {
+      sOutput = "<span id=\"|\"></span>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "HTML" */
+    else
+    {
+      var sIWOut = "";
+
+      sIWOut = __InputWizard_Show(
+        "",
+        "",
+        "", 1,
+        "");
+
+      if(length(sIWOut))
+      {
+        __NewFile( sIWOut );
+      }
+
+    }
+  }
+  /* Button "nbsp" */
+  else if(nPluginID == 3)
+  {
+    /* Menu Item "NBSP" */
+    sOutput = "&nbsp;";
+  }
+  /* Button "TM" */
+  else if(nPluginID == 4)
+  {
+    /* Menu Item "TM" */
+    sOutput = "&trade;";
+  }
+  /* Button "Forms" */
+  else if(nPluginID == 5)
+  {
+    /* Menu Item "default" */
+    if(nMenuItemID == 0)
+    {
+      sOutput = "form tags";
+    }
+    /* Menu Item "form action method=post" */
+    else if(nMenuItemID == 1)
+    {
+      sOutput = "<form action=\'|\' method=\'POST\'>\n\n</form>";
+      nMoveCursor = 1;
+    }
+    /* Menu Item "input" */
+    else
+    {
+      sOutput = "<form action=\'|\' method=\'POST\'>\n\n</form>";
+    }
+  }
+
+  hkp_DataAdd( pDataOut, "OUTPUT", sOutput );
+  hkp_DataAddInt( pDataOut, "MODE_OUTPUT", nOutputMode );
+  hkp_DataAddInt( pDataOut, "MODE_MOVE_TO_CARET", nMoveCursor );
+  hkp_DataAddInt( pDataOut, "MODE_PREPROCESS_FORMAT_TAGS", nFormatTags );
+
+}
+
+/*-------------------------------------------------------------------------
+  HTML-Kit will call the following function to initialize and register
+  the plugin.
+-------------------------------------------------------------------------*/
+function hkp_Register(pDataIn, pDataOut)
+{
+  /*-------------------------
+    Button # 1:
+      "Lists"
+  -------------------------*/
+  hkp_DataSetGlobalSuffix( "_1" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "Lists" );
+  hkp_DataAdd( pDataOut, "SECTION", "HTML" );
+
+  /* Menu Items */
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM1", "LI" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM2", "UL" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+
+  /*------------------------
+    Button # 2:
+      "HTML"
+  ------------------------*/
+  hkp_DataSetGlobalSuffix( "_2" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "HTML" );
+  hkp_DataAdd( pDataOut, "SECTION", "HTML" );
+
+  /* Menu Items */
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM1", "A" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM2", "<html>" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM3", "<head>" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM4", "<title>" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM5", "<body>" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM6", "<p>" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM7", "<div id=\"\">" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM8", "<h1>" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM9", "<h2>" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM10", "<h3>" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM11", "<h4>" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM12", "<h5>" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM13", "<span>" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+
+  /*------------------------
+    Button # 3:
+      "nbsp"
+  ------------------------*/
+  hkp_DataSetGlobalSuffix( "_3" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "nbsp" );
+  hkp_DataAdd( pDataOut, "SECTION", "HTML" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+  hkp_DataAdd( pDataOut, "DESCRIPTION", "adds a non-breaking space" );
+
+  hkp_DataSetGlobalSuffix( "" );
+
+  /*----------------------
+    Button # 4:
+      "TM"
+  ----------------------*/
+  hkp_DataSetGlobalSuffix( "_4" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "TM" );
+  hkp_DataAdd( pDataOut, "SECTION", "HTML" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+  hkp_DataAdd( pDataOut, "DESCRIPTION", "adds trademark symbol entity" );
+
+  hkp_DataSetGlobalSuffix( "" );
+
+  /*-------------------------
+    Button # 5:
+      "Forms"
+  -------------------------*/
+  hkp_DataSetGlobalSuffix( "_5" );
+
+  /* Required Information */
+  hkp_DataAdd( pDataOut, "NAME", "Forms" );
+  hkp_DataAdd( pDataOut, "SECTION", "myhtml" );
+
+  /* Menu Items */
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM1", "default" );
+  hkp_DataAdd( pDataOut, "DROPDOWN_ITEM2", "form action method=post" );
+
+  /* Optional Information */
+  hkp_DataAdd( pDataOut, "VERSION", "1.0" );
+  hkp_DataAddInt( pDataOut, "MODE_SHOW_STATUS", 0 );
+
+  hkp_DataSetGlobalSuffix( "" );
+}
+
